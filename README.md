@@ -8,3 +8,7 @@ Making pong: http://elm-lang.org/blog/making-pong
 https://github.com/Dobiasd/articles/blob/master/switching_from_imperative_to_functional_programming_with_games_in_Elm.md
 
 Compile: `elm-make Main.elm --output index.html`
+
+#### Examples
+
+Pong: http://danigb.github.io/learning-elm/pong.html
