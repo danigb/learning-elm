@@ -7,8 +7,11 @@ Source: https://pragmaticstudio.com/blog/2014/12/19/getting-started-with-elm
 Making pong: http://elm-lang.org/blog/making-pong
 https://github.com/Dobiasd/articles/blob/master/switching_from_imperative_to_functional_programming_with_games_in_Elm.md
 
+The awesome list: https://github.com/isRuslan/awesome-elm
+
 Compile: `elm-make Main.elm --output index.html`
 
 #### Examples
 
 Pong: http://danigb.github.io/learning-elm/pong.html
+Follow the mouse: http://danigb.github.io/learning-elm/follow.html
