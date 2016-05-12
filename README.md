@@ -13,5 +13,6 @@ Compile: `elm-make Main.elm --output index.html`
 
 #### Examples
 
+Dice: http://danigb.github.io/learning-elm/dice
 Pong: http://danigb.github.io/learning-elm/pong.html
 Follow the mouse: http://danigb.github.io/learning-elm/follow.html
