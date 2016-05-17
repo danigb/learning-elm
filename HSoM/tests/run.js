@@ -7311,6 +7311,253 @@ var _elm_community$elm_test$ElmTest$equals = _elm_community$elm_test$ElmTest_Tes
 var _elm_community$elm_test$ElmTest$defaultTest = _elm_community$elm_test$ElmTest_Test$defaultTest;
 var _elm_community$elm_test$ElmTest$test = _elm_community$elm_test$ElmTest_Test$test;
 
+var _user$project$Music$pcToInt = function (pc) {
+	var _p0 = pc;
+	switch (_p0.ctor) {
+		case 'Cff':
+			return -2;
+		case 'Cf':
+			return -1;
+		case 'C':
+			return 0;
+		case 'Cs':
+			return 1;
+		case 'Css':
+			return 2;
+		case 'Dff':
+			return 0;
+		case 'Df':
+			return 1;
+		case 'D':
+			return 2;
+		case 'Ds':
+			return 3;
+		case 'Dss':
+			return 4;
+		case 'Eff':
+			return 2;
+		case 'Ef':
+			return 3;
+		case 'E':
+			return 4;
+		case 'Es':
+			return 5;
+		case 'Ess':
+			return 6;
+		case 'Fff':
+			return 3;
+		case 'Ff':
+			return 4;
+		case 'F':
+			return 5;
+		case 'Fs':
+			return 6;
+		case 'Fss':
+			return 7;
+		case 'Gff':
+			return 5;
+		case 'Gf':
+			return 6;
+		case 'G':
+			return 7;
+		case 'Gs':
+			return 8;
+		case 'Gss':
+			return 9;
+		case 'Aff':
+			return 7;
+		case 'Af':
+			return 8;
+		case 'A':
+			return 9;
+		case 'As':
+			return 10;
+		case 'Ass':
+			return 11;
+		case 'Bff':
+			return 9;
+		case 'Bf':
+			return 10;
+		case 'B':
+			return 11;
+		case 'Bs':
+			return 12;
+		default:
+			return 13;
+	}
+};
+var _user$project$Music$absPitch = function (_p1) {
+	var _p2 = _p1;
+	return (12 * _p2._1) + _user$project$Music$pcToInt(_p2._0);
+};
+var _user$project$Music$Bss = {ctor: 'Bss'};
+var _user$project$Music$Bs = {ctor: 'Bs'};
+var _user$project$Music$B = {ctor: 'B'};
+var _user$project$Music$Ass = {ctor: 'Ass'};
+var _user$project$Music$Bf = {ctor: 'Bf'};
+var _user$project$Music$As = {ctor: 'As'};
+var _user$project$Music$Bff = {ctor: 'Bff'};
+var _user$project$Music$A = {ctor: 'A'};
+var _user$project$Music$Gss = {ctor: 'Gss'};
+var _user$project$Music$Af = {ctor: 'Af'};
+var _user$project$Music$Gs = {ctor: 'Gs'};
+var _user$project$Music$Aff = {ctor: 'Aff'};
+var _user$project$Music$G = {ctor: 'G'};
+var _user$project$Music$Fss = {ctor: 'Fss'};
+var _user$project$Music$Gf = {ctor: 'Gf'};
+var _user$project$Music$Fs = {ctor: 'Fs'};
+var _user$project$Music$Ess = {ctor: 'Ess'};
+var _user$project$Music$Gff = {ctor: 'Gff'};
+var _user$project$Music$F = {ctor: 'F'};
+var _user$project$Music$Es = {ctor: 'Es'};
+var _user$project$Music$Ff = {ctor: 'Ff'};
+var _user$project$Music$E = {ctor: 'E'};
+var _user$project$Music$Dss = {ctor: 'Dss'};
+var _user$project$Music$Fff = {ctor: 'Fff'};
+var _user$project$Music$Ef = {ctor: 'Ef'};
+var _user$project$Music$Ds = {ctor: 'Ds'};
+var _user$project$Music$Eff = {ctor: 'Eff'};
+var _user$project$Music$D = {ctor: 'D'};
+var _user$project$Music$Css = {ctor: 'Css'};
+var _user$project$Music$Df = {ctor: 'Df'};
+var _user$project$Music$Cs = {ctor: 'Cs'};
+var _user$project$Music$Dff = {ctor: 'Dff'};
+var _user$project$Music$C = {ctor: 'C'};
+var _user$project$Music$Cf = {ctor: 'Cf'};
+var _user$project$Music$Cff = {ctor: 'Cff'};
+var _user$project$Music$Rest = function (a) {
+	return {ctor: 'Rest', _0: a};
+};
+var _user$project$Music$Note = F2(
+	function (a, b) {
+		return {ctor: 'Note', _0: a, _1: b};
+	});
+var _user$project$Music$Modify = F2(
+	function (a, b) {
+		return {ctor: 'Modify', _0: a, _1: b};
+	});
+var _user$project$Music$Par = F2(
+	function (a, b) {
+		return {ctor: 'Par', _0: a, _1: b};
+	});
+var _user$project$Music$Seq = F2(
+	function (a, b) {
+		return {ctor: 'Seq', _0: a, _1: b};
+	});
+var _user$project$Music$Prim = function (a) {
+	return {ctor: 'Prim', _0: a};
+};
+var _user$project$Music$note = F2(
+	function (d, p) {
+		return _user$project$Music$Prim(
+			A2(_user$project$Music$Note, d, p));
+	});
+var _user$project$Music$rest = function (d) {
+	return _user$project$Music$Prim(
+		_user$project$Music$Rest(d));
+};
+var _user$project$Music$Tempo = function (a) {
+	return {ctor: 'Tempo', _0: a};
+};
+var _user$project$Music$tempo = F2(
+	function (r, m) {
+		return A2(
+			_user$project$Music$Modify,
+			_user$project$Music$Tempo(r),
+			m);
+	});
+
+var _user$project$Main$music = A2(
+	_elm_community$elm_test$ElmTest$suite,
+	'Music',
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'Rest',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				_user$project$Music$Rest(3),
+				_user$project$Music$Rest(3))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'Note',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				A2(
+					_user$project$Music$Note,
+					3,
+					{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 4}),
+				A2(
+					_user$project$Music$Note,
+					3,
+					{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 4}))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'Prim Rest',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				_user$project$Music$Prim(
+					_user$project$Music$Rest(3)),
+				_user$project$Music$Prim(
+					_user$project$Music$Rest(3)))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'Prim Note',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				_user$project$Music$Prim(
+					A2(
+						_user$project$Music$Note,
+						4,
+						{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 5})),
+				_user$project$Music$Prim(
+					A2(
+						_user$project$Music$Note,
+						4,
+						{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 5})))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'note',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				A2(_user$project$Music$note, 3, _user$project$Music$C),
+				_user$project$Music$Prim(
+					A2(_user$project$Music$Note, 3, _user$project$Music$C)))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'rest',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				_user$project$Music$rest(1),
+				_user$project$Music$Prim(
+					_user$project$Music$Rest(1)))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'tempo',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				A2(
+					_user$project$Music$tempo,
+					4,
+					A2(_user$project$Music$note, 3, _user$project$Music$C)),
+				A2(
+					_user$project$Music$Modify,
+					_user$project$Music$Tempo(4),
+					_user$project$Music$Prim(
+						A2(_user$project$Music$Note, 3, _user$project$Music$C))))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'absPitch',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				48,
+				_user$project$Music$absPitch(
+					{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 4})))
+		]));
+var _user$project$Main$main = {
+	main: _elm_community$elm_test$ElmTest$runSuite(_user$project$Main$music)
+};
 var _user$project$Main$tests = A2(
 	_elm_community$elm_test$ElmTest$suite,
 	'A Test Suite',
@@ -7332,9 +7579,6 @@ var _user$project$Main$tests = A2(
 			'This test should pass',
 			_elm_community$elm_test$ElmTest$assert(true))
 		]));
-var _user$project$Main$main = {
-	main: _elm_community$elm_test$ElmTest$runSuite(_user$project$Main$tests)
-};
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
