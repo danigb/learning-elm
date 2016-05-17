@@ -1,5 +1,5 @@
 module Music exposing ( PitchClass(..), Primitive(..), Music(..), Control(..),
-  note, rest, tempo, absPitch )
+  note, rest, tempo, absPitch, pitch )
 
 {-|
 My attempt to port HSoM to elm
@@ -18,7 +18,7 @@ Octave, PitchClass, Pitch, Dur
 
 # 2.4
 
-@docs absPitch
+@docs absPitch, pitch
 
 -}
 
@@ -84,6 +84,21 @@ type alias AbsPitch = Int
 absPitch : Pitch -> AbsPitch
 absPitch (pc, o) =
   12 * o + pcToInt pc
+
+{-| Converting an absolute pitch to a pitch is a bit more tricky, because of
+enharmonic equivalences. For example, the absolute pitch 15 might correspond
+to either (Ds, 1) or (Ef , 1). Euterpea takes the approach of always
+returning a sharp in such ambiguous cases -}
+pitch : AbsPitch -> (Int, Int)
+pitch ap =
+  let
+    chroma = ap % 12
+    oct = ap // 12
+  in
+    (chroma, oct)
+
+
+{- NOTE: Those are at the end because they are too large. Any compact syntax? -}
 
 pcToInt pc  = case pc of
   Cff  -> -2

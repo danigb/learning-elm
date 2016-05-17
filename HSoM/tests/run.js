@@ -7386,6 +7386,11 @@ var _user$project$Music$pcToInt = function (pc) {
 			return 13;
 	}
 };
+var _user$project$Music$pitch = function (ap) {
+	var oct = (ap / 12) | 0;
+	var chroma = A2(_elm_lang$core$Basics_ops['%'], ap, 12);
+	return {ctor: '_Tuple2', _0: chroma, _1: oct};
+};
 var _user$project$Music$absPitch = function (_p1) {
 	var _p2 = _p1;
 	return (12 * _p2._1) + _user$project$Music$pcToInt(_p2._0);
@@ -7553,7 +7558,32 @@ var _user$project$Main$music = A2(
 				_elm_community$elm_test$ElmTest$assertEqual,
 				48,
 				_user$project$Music$absPitch(
-					{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 4})))
+					{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 4}))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'abs pitches',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				_elm_lang$core$Native_List.fromArray(
+					[48, 50, 52, 53, 55]),
+				A2(
+					_elm_lang$core$List$map,
+					_user$project$Music$absPitch,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 4},
+							{ctor: '_Tuple2', _0: _user$project$Music$D, _1: 4},
+							{ctor: '_Tuple2', _0: _user$project$Music$E, _1: 4},
+							{ctor: '_Tuple2', _0: _user$project$Music$F, _1: 4},
+							{ctor: '_Tuple2', _0: _user$project$Music$G, _1: 4}
+						])))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'pitch',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				{ctor: '_Tuple2', _0: 1, _1: 4},
+				_user$project$Music$pitch(49)))
 		]));
 var _user$project$Main$main = {
 	main: _elm_community$elm_test$ElmTest$runSuite(_user$project$Main$music)

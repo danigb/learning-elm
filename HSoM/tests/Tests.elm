@@ -26,7 +26,10 @@ music =
       test "rest" (assertEqual (rest 1) (Prim (Rest 1))),
       test "tempo" (assertEqual (tempo 4 (note 3 C))
         (Modify (Tempo 4) (Prim (Note 3 C)))),
-      test "absPitch" (assertEqual 48 (absPitch (C, 4)))
+      test "absPitch" (assertEqual 48 (absPitch (C, 4))),
+      test "abs pitches" (assertEqual [48,50,52,53,55]
+        (List.map absPitch [(C, 4), (D, 4), (E, 4), (F, 4), (G, 4)])),
+      test "pitch" (assertEqual (1, 4) (pitch 49))
     ]
 
 main =

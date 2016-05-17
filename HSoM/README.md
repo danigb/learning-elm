@@ -1,9 +1,12 @@
+# Elm school of music
+
+An attempt to port [HSoM](http://www.cs.yale.edu/homes/hudak/Papers/HSoM.pdf) to elm
+
+Very incomplete.
 
 
-```
-elm-package install -y elm-lang/core
-npm install -g elm-test
-elm-package install -y elm-community/elm-test
-elm-test init # don't install anything new
-elm-test tests/TestRunner.elm
+To run the tests:
+
+```bash
+./script/test
 ```
