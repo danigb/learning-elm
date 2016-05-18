@@ -85,17 +85,29 @@ absPitch : Pitch -> AbsPitch
 absPitch (pc, o) =
   12 * o + pcToInt pc
 
+
+chromatic = [C, Df, D, Ef, E, F, Gf, G, Af, A, Bf, B]
+{- NOTE: this is a hack. I don't want to return a Maybe... since ap % 2,
+  I know positively it can't return Nothing -}
+{-| Get the pitch class of an absolute pitch -}
+pitchClass : AbsPitch -> PitchClass
+pitchClass ap =
+  case List.head (List.drop (ap % 12) chromatic) of
+    Nothing -> C
+    Just pc -> pc
+
+{-| Get the octave of an absolute pitch -}
+octave : AbsPitch -> Int
+octave ap =
+  if ap < 0 then (ap // 12) - 1 else ap // 12
+
 {-| Converting an absolute pitch to a pitch is a bit more tricky, because of
 enharmonic equivalences. For example, the absolute pitch 15 might correspond
 to either (Ds, 1) or (Ef , 1). Euterpea takes the approach of always
 returning a sharp in such ambiguous cases -}
-pitch : AbsPitch -> (Int, Int)
+pitch : AbsPitch -> Pitch
 pitch ap =
-  let
-    chroma = ap % 12
-    oct = ap // 12
-  in
-    (chroma, oct)
+  (pitchClass ap, octave ap)
 
 
 {- NOTE: Those are at the end because they are too large. Any compact syntax? -}

@@ -29,7 +29,9 @@ music =
       test "absPitch" (assertEqual 48 (absPitch (C, 4))),
       test "abs pitches" (assertEqual [48,50,52,53,55]
         (List.map absPitch [(C, 4), (D, 4), (E, 4), (F, 4), (G, 4)])),
-      test "pitch" (assertEqual (1, 4) (pitch 49))
+      test "pitch" (assertEqual (Df, 4) (pitch 49)),
+      test "pitch 0 is C0" (assertEqual (C, 0) (pitch 0)),
+      test "negative pitch" (assertEqual (Bf, -1) (pitch -2))
     ]
 
 main =

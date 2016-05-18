@@ -7386,10 +7386,8 @@ var _user$project$Music$pcToInt = function (pc) {
 			return 13;
 	}
 };
-var _user$project$Music$pitch = function (ap) {
-	var oct = (ap / 12) | 0;
-	var chroma = A2(_elm_lang$core$Basics_ops['%'], ap, 12);
-	return {ctor: '_Tuple2', _0: chroma, _1: oct};
+var _user$project$Music$octave = function (ap) {
+	return (_elm_lang$core$Native_Utils.cmp(ap, 0) < 0) ? (((ap / 12) | 0) - 1) : ((ap / 12) | 0);
 };
 var _user$project$Music$absPitch = function (_p1) {
 	var _p2 = _p1;
@@ -7428,6 +7426,27 @@ var _user$project$Music$Df = {ctor: 'Df'};
 var _user$project$Music$Cs = {ctor: 'Cs'};
 var _user$project$Music$Dff = {ctor: 'Dff'};
 var _user$project$Music$C = {ctor: 'C'};
+var _user$project$Music$chromatic = _elm_lang$core$Native_List.fromArray(
+	[_user$project$Music$C, _user$project$Music$Df, _user$project$Music$D, _user$project$Music$Ef, _user$project$Music$E, _user$project$Music$F, _user$project$Music$Gf, _user$project$Music$G, _user$project$Music$Af, _user$project$Music$A, _user$project$Music$Bf, _user$project$Music$B]);
+var _user$project$Music$pitchClass = function (ap) {
+	var _p3 = _elm_lang$core$List$head(
+		A2(
+			_elm_lang$core$List$drop,
+			A2(_elm_lang$core$Basics_ops['%'], ap, 12),
+			_user$project$Music$chromatic));
+	if (_p3.ctor === 'Nothing') {
+		return _user$project$Music$C;
+	} else {
+		return _p3._0;
+	}
+};
+var _user$project$Music$pitch = function (ap) {
+	return {
+		ctor: '_Tuple2',
+		_0: _user$project$Music$pitchClass(ap),
+		_1: _user$project$Music$octave(ap)
+	};
+};
 var _user$project$Music$Cf = {ctor: 'Cf'};
 var _user$project$Music$Cff = {ctor: 'Cff'};
 var _user$project$Music$Rest = function (a) {
@@ -7582,8 +7601,22 @@ var _user$project$Main$music = A2(
 			'pitch',
 			A2(
 				_elm_community$elm_test$ElmTest$assertEqual,
-				{ctor: '_Tuple2', _0: 1, _1: 4},
-				_user$project$Music$pitch(49)))
+				{ctor: '_Tuple2', _0: _user$project$Music$Df, _1: 4},
+				_user$project$Music$pitch(49))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'pitch 0 is C0',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				{ctor: '_Tuple2', _0: _user$project$Music$C, _1: 0},
+				_user$project$Music$pitch(0))),
+			A2(
+			_elm_community$elm_test$ElmTest$test,
+			'negative pitch',
+			A2(
+				_elm_community$elm_test$ElmTest$assertEqual,
+				{ctor: '_Tuple2', _0: _user$project$Music$Bf, _1: -1},
+				_user$project$Music$pitch(-2)))
 		]));
 var _user$project$Main$main = {
 	main: _elm_community$elm_test$ElmTest$runSuite(_user$project$Main$music)
