@@ -1,3 +1,9 @@
+# Circles
+
+
+## 1. Basic structure
+
+```elm
 import Html exposing (Html)
 import Html.App as App
 import Svg exposing (Svg, rect)
@@ -27,3 +33,22 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
+```
+
+## 2. Embed Elm in HTML
+
+http://guide.elm-lang.org/interop/html.html
+
+```html
+<html>
+  <head>
+    <title>Circles</title>
+    <link rel="stylesheet" type="text/css" href="assets/circles.css" media="screen" />
+  </head>
+  <body></body>
+  <script src="assets/circles.js"></script>
+  <script>
+    Elm.Main.fullscreen()
+  </script>
+</html>
+```
