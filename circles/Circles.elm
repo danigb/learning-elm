@@ -34,13 +34,13 @@ type Msg =
   | NewRand Int
 
 
-genCmd : Cmd Msg
-genCmd =
+random : Cmd Msg
+random =
   Random.generate NewRand (Random.int 0 11)
 
 init : (Model, Cmd Msg)
 init =
-  ({ circles = [], nextRand = 0 }, genCmd)
+  ({ circles = [], nextRand = 0 }, random)
 
 view : Model -> Html Msg
 view model =
@@ -70,26 +70,30 @@ getClickPos =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    AddCircle (x, y) -> (addCircle (x, y) model, play (freq model.nextRand))
+    {- AddCircle (x, y) -> (addCircle (x, y) model, (Cmd.batch [play (freq model.seed), random])) -}
+    AddCircle (x, y) -> addCircle x y model
     Tick t -> (tick model, Cmd.none)
-    NewRand i -> Debug.log "newRand" ({ model | nextRand = i }, Cmd.none)
+    NewRand i -> ({ model | nextRand = i }, Cmd.none)
 
 tick : Model -> Model
 tick model =
   let
-    updated = List.map (\c -> { c| r = c.r - 0.2 }) model.circles
+    updated = List.map (\c -> { c| r = c.r - 0.4 }) model.circles
     remaining = List.filter (\c -> c.r > 0) updated
   in
     { model | circles = remaining }
 
-freq: Int -> Float
-freq seed =
-  toFloat(seed) * 100.0
+freq : Int -> Float
+freq seed = toFloat(seed) * 100.0
 
-
-addCircle : (Int, Int) -> Model -> Model
-addCircle (x, y) model =
-  { model | circles = (Circle x y 80 model.nextRand) :: model.circles }
+addCircle : Int -> Int -> Model -> (Model, Cmd Msg)
+addCircle x y model =
+  let
+    circle = Circle x y 80 model.nextRand
+    playNote = play (toFloat(model.nextRand) * 110.0)
+    updated = { model | circles = circle :: model.circles }
+  in
+    (updated, Cmd.batch [playNote, random])
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

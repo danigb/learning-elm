@@ -19,7 +19,7 @@
       gain.connect(ac.destination)
       var pluck = new PluckNode(ac, 1000, 10)
       pluck.connect(gain)
-      pluck.frequency.value = 880
+      pluck.frequency.value = freq
       pluck.start(now)
       pluck.stop(now + 5)
     })

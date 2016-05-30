@@ -98,3 +98,29 @@ view model =
   in
     Svg.svg [id "circles-app"] (bg :: circles)
 ```
+
+## 6. Generate random
+
+```elm
+random : Cmd Msg
+random =
+  Random.generate NewRand (Random.int 0 11)
+
+update msg model =
+  case msg of
+    AddCircle (x, y) -> (addCircle x y model, random)
+```
+
+## 7. Talk to JS
+
+```elm
+port module Ports exposing (..)
+
+port play : Float -> Cmd msg
+```
+
+```elm
+update msg model =
+  case msg of
+    AddCircle (x, y) -> (addCircle x y model, Cmd.batch [random, playCircle])
+```

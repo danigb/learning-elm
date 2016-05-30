@@ -8059,7 +8059,7 @@ var _user$project$Circles$tick = function (model) {
 		function (c) {
 			return _elm_lang$core$Native_Utils.update(
 				c,
-				{r: c.r - 0.2});
+				{r: c.r - 0.4});
 		},
 		model.circles);
 	var remaining = A2(
@@ -8133,51 +8133,6 @@ var _user$project$Circles$Circle = F4(
 	function (a, b, c, d) {
 		return {x: a, y: b, r: c, seed: d};
 	});
-var _user$project$Circles$addCircle = F2(
-	function (_p1, model) {
-		var _p2 = _p1;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				circles: A2(
-					_elm_lang$core$List_ops['::'],
-					A4(_user$project$Circles$Circle, _p2._0, _p2._1, 80, model.nextRand),
-					model.circles)
-			});
-	});
-var _user$project$Circles$update = F2(
-	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
-			case 'AddCircle':
-				return {
-					ctor: '_Tuple2',
-					_0: A2(
-						_user$project$Circles$addCircle,
-						{ctor: '_Tuple2', _0: _p3._0._0, _1: _p3._0._1},
-						model),
-					_1: _user$project$Ports$play(
-						_user$project$Circles$freq(model.nextRand))
-				};
-			case 'Tick':
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Circles$tick(model),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return A2(
-					_elm_lang$core$Debug$log,
-					'newRand',
-					{
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{nextRand: _p3._0}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					});
-		}
-	});
 var _user$project$Circles$Model = F2(
 	function (a, b) {
 		return {circles: a, nextRand: b};
@@ -8185,7 +8140,7 @@ var _user$project$Circles$Model = F2(
 var _user$project$Circles$NewRand = function (a) {
 	return {ctor: 'NewRand', _0: a};
 };
-var _user$project$Circles$genCmd = A2(
+var _user$project$Circles$random = A2(
 	_elm_lang$core$Random$generate,
 	_user$project$Circles$NewRand,
 	A2(_elm_lang$core$Random$int, 0, 11));
@@ -8196,8 +8151,48 @@ var _user$project$Circles$init = {
 			[]),
 		nextRand: 0
 	},
-	_1: _user$project$Circles$genCmd
+	_1: _user$project$Circles$random
 };
+var _user$project$Circles$addCircle = F3(
+	function (x, y, model) {
+		var playNote = _user$project$Ports$play(
+			_elm_lang$core$Basics$toFloat(model.nextRand) * 110.0);
+		var circle = A4(_user$project$Circles$Circle, x, y, 80, model.nextRand);
+		var updated = _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				circles: A2(_elm_lang$core$List_ops['::'], circle, model.circles)
+			});
+		return {
+			ctor: '_Tuple2',
+			_0: updated,
+			_1: _elm_lang$core$Platform_Cmd$batch(
+				_elm_lang$core$Native_List.fromArray(
+					[playNote, _user$project$Circles$random]))
+		};
+	});
+var _user$project$Circles$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'AddCircle':
+				return A3(_user$project$Circles$addCircle, _p1._0._0, _p1._0._1, model);
+			case 'Tick':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Circles$tick(model),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{nextRand: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
 var _user$project$Circles$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
