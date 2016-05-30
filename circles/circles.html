@@ -5,7 +5,23 @@
   </head>
   <body></body>
   <script src="assets/circles.js"></script>
+  <script src="assets/pluck-node.min.js"></script>
   <script>
-    Elm.Main.fullscreen()
+    var ac = new AudioContext()
+    var app = Elm.Circles.fullscreen()
+    app.ports.play.subscribe(function (freq) {
+      var now = ac.currentTime
+      console.log('Play JS', freq, PluckNode)
+      var gain = ac.createGain()
+      gain.gain.setValueAtTime(0.6, now)
+      gain.gain.setValueAtTime(0.6, now + 1)
+      gain.gain.linearRampToValueAtTime(0.5, now + 3)
+      gain.connect(ac.destination)
+      var pluck = new PluckNode(ac, 1000, 10)
+      pluck.connect(gain)
+      pluck.frequency.value = 880
+      pluck.start(now)
+      pluck.stop(now + 5)
+    })
   </script>
 </html>
