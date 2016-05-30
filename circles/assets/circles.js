@@ -6766,6 +6766,107 @@ var _elm_lang$html$Html_App$beginnerProgram = function (_p1) {
 };
 var _elm_lang$html$Html_App$map = _elm_lang$virtual_dom$VirtualDom$map;
 
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode_ops[':='], 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['target', 'checked']),
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['target', 'value']),
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
+
 var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
 var _elm_lang$svg$Svg$svgNamespace = A2(
 	_elm_lang$virtual_dom$VirtualDom$property,
@@ -7117,40 +7218,109 @@ var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
+var _user$project$Main$getClickPos = A3(
+	_elm_lang$core$Json_Decode$object2,
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		_elm_lang$core$Native_List.fromArray(
+			['offsetX']),
+		_elm_lang$core$Json_Decode$int),
+	A2(
+		_elm_lang$core$Json_Decode$at,
+		_elm_lang$core$Native_List.fromArray(
+			['offsetY']),
+		_elm_lang$core$Json_Decode$int));
+var _user$project$Main$viewCircle = function (circle) {
+	return A2(
+		_elm_lang$svg$Svg$circle,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$cx(
+				_elm_lang$core$Basics$toString(circle.x)),
+				_elm_lang$svg$Svg_Attributes$cy(
+				_elm_lang$core$Basics$toString(circle.y)),
+				_elm_lang$svg$Svg_Attributes$r(
+				_elm_lang$core$Basics$toString(circle.r)),
+				_elm_lang$svg$Svg_Attributes$style('fill:#ca0;')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: {
+		circles: _elm_lang$core$Native_List.fromArray(
+			[])
+	},
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Main$Circle = F3(
+	function (a, b, c) {
+		return {x: a, y: b, r: c};
+	});
+var _user$project$Main$addCircle = F2(
+	function (_p0, model) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				circles: A2(
+					_elm_lang$core$List_ops['::'],
+					A3(_user$project$Main$Circle, _p1._0, _p1._1, 80),
+					model.circles)
+			});
+	});
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		var _p2 = msg;
+		return {
+			ctor: '_Tuple2',
+			_0: A2(
+				_user$project$Main$addCircle,
+				{ctor: '_Tuple2', _0: _p2._0._0, _1: _p2._0._1},
+				model),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
 	});
+var _user$project$Main$Model = function (a) {
+	return {circles: a};
+};
+var _user$project$Main$AddCircle = function (a) {
+	return {ctor: 'AddCircle', _0: a};
+};
+var _user$project$Main$onClick = A2(
+	_elm_lang$html$Html_Events$on,
+	'click',
+	A2(_elm_lang$core$Json_Decode$map, _user$project$Main$AddCircle, _user$project$Main$getClickPos));
 var _user$project$Main$view = function (model) {
+	var circles = A2(_elm_lang$core$List$map, _user$project$Main$viewCircle, model.circles);
+	var bg = A2(
+		_elm_lang$svg$Svg$rect,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$x('0'),
+				_elm_lang$svg$Svg_Attributes$y('0'),
+				_elm_lang$svg$Svg_Attributes$width('100%'),
+				_elm_lang$svg$Svg_Attributes$height('100%'),
+				_user$project$Main$onClick
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
 	return A2(
 		_elm_lang$svg$Svg$svg,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$svg$Svg_Attributes$id('circles-app')
 			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$svg$Svg$rect,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$svg$Svg_Attributes$x('0'),
-						_elm_lang$svg$Svg_Attributes$y('0'),
-						_elm_lang$svg$Svg_Attributes$width('100%'),
-						_elm_lang$svg$Svg_Attributes$height('100%')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[]))
-			]));
+		A2(_elm_lang$core$List_ops['::'], bg, circles));
 };
-var _user$project$Main$Model = {};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$Model, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(
 		{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})
-};
-var _user$project$Main$AddCircle = function (a) {
-	return {ctor: 'AddCircle', _0: a};
 };
 
 var Elm = {};

@@ -13,7 +13,6 @@ Compile: `elm-make Main.elm --output index.html`
 
 #### Examples
 
+- Circles: http://danigb.github.io/learning-elm/circles
 - Dice: http://danigb.github.io/learning-elm/dice
 - Clock: http://danigb.github.io/learning-elm/clock
-- Pong: http://danigb.github.io/learning-elm/pong.html
-- Follow the mouse: http://danigb.github.io/learning-elm/follow.html
