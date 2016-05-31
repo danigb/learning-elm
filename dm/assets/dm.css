@@ -1,0 +1,12 @@
+#dm-app {
+  width: 66.666%;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#bg {
+  fill: #333
+}
