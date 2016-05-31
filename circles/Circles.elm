@@ -32,7 +32,7 @@ type Msg =
   AddCircle (Int, Int)
   | Tick Float
   | NewRand Int
-
+  | WindowSize
 
 random : Cmd Msg
 random =

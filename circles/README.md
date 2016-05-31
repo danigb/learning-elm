@@ -1,5 +1,7 @@
 # Circles
 
+A simplified version of: https://github.com/irh/circles
+
 ## 1. Basic structure
 
 ```elm
@@ -116,11 +118,12 @@ update msg model =
 ```elm
 port module Ports exposing (..)
 
+{- Play with given frequency -}
 port play : Float -> Cmd msg
 ```
 
 ```elm
 update msg model =
   case msg of
-    AddCircle (x, y) -> (addCircle x y model, Cmd.batch [random, playCircle])
+    AddCircle (x, y) -> (addCircle x y model, Cmd.batch [random, (play 440)])
 ```
