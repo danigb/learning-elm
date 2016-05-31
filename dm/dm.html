@@ -9,14 +9,9 @@
   <script>
     var app = Elm.DM.fullscreen()
     var ac = new AudioContext()
-    var dm = eightoeight(ac)
-    console.log('dm', dm)
+    var dm = eightoeight(ac).connect(ac.destination)
     app.ports.play.subscribe(function (name) {
-      var inst = dm[name]
-      if (!inst) return
-      var node = inst()
-      node.connect(ac.destination)
-      node.start(ac.currentTime)
+      dm.start(name, ac.currentTime)
     })
   </script>
   </script>
