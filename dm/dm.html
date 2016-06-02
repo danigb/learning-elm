@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>Circles</title>
+    <link rel="stylesheet" type="text/css" href="assets/dm.css" media="screen" />
+  </head>
+  <body></body>
+  <script src="assets/dm.js"></script>
+  <script src="assets/808.js"></script>
+  <script>
+    var app = Elm.DM.fullscreen()
+    var ac = new AudioContext()
+    var dm = eightoeight(ac).connect(ac.destination)
+    app.ports.play.subscribe(function (name) {
+      dm.start(name, ac.currentTime)
+    })
+  </script>
+  </script>
+</html>
