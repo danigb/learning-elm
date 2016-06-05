@@ -8,7 +8,6 @@ app.ports.play.subscribe(function (note) {
 })
 
 app.ports.schedule.subscribe(function (events) {
-  console.log('schedule', events, piano.schedule)
   piano.schedule(events, null, 0)
 })
 

@@ -8072,7 +8072,47 @@ var _user$project$Ports$Event = F2(
 		return {time: a, note: b};
 	});
 
-var _user$project$Music$randomList = function (n) {
+var _user$project$Music$repeat = F2(
+	function (times, list) {
+		return _elm_lang$core$List$concat(
+			A2(
+				_elm_lang$core$List$map,
+				function (a) {
+					return list;
+				},
+				_elm_lang$core$Native_List.range(1, times)));
+	});
+var _user$project$Music$twelveTone = F2(
+	function (key, octs) {
+		var inKey = A2(
+			_elm_lang$core$List$map,
+			F2(
+				function (x, y) {
+					return x + y;
+				})(key),
+			_elm_lang$core$Native_List.fromArray(
+				[0, 1, 6, 7, 10, 11, 5, 4, 3, 9, 2, 8]));
+		return A3(
+			_elm_lang$core$List$map2,
+			F2(
+				function (x, y) {
+					return x + y;
+				}),
+			octs,
+			A2(_user$project$Music$repeat, 4, inKey));
+	});
+var _user$project$Music$randomOctaves = function (size) {
+	return A2(
+		_elm_lang$core$Random$list,
+		size,
+		A2(
+			_elm_lang$core$Random$map,
+			function (n) {
+				return n * 12;
+			},
+			A2(_elm_lang$core$Random$int, 0, 1)));
+};
+var _user$project$Music$randomNoteList = function (n) {
 	return A2(
 		_elm_lang$core$Random$list,
 		n,
@@ -8083,7 +8123,7 @@ var _user$project$Music$chromatic = A2(
 	_elm_lang$core$Native_List.range(60, 72),
 	_elm_lang$core$List$reverse(
 		_elm_lang$core$Native_List.range(60, 71)));
-var _user$project$Music$phrase = F2(
+var _user$project$Music$sequence = F2(
 	function (dur, notes) {
 		return A2(
 			_elm_lang$core$List$indexedMap,
@@ -8100,6 +8140,10 @@ var _user$project$Music$Model = F3(
 	function (a, b, c) {
 		return {ready: a, seed: b, inst: c};
 	});
+var _user$project$Music$TwelveToneOcts = function (a) {
+	return {ctor: 'TwelveToneOcts', _0: a};
+};
+var _user$project$Music$TwelveToneExample = {ctor: 'TwelveToneExample'};
 var _user$project$Music$RandomList = function (a) {
 	return {ctor: 'RandomList', _0: a};
 };
@@ -8131,7 +8175,7 @@ var _user$project$Music$update = F2(
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _user$project$Ports$schedule(
-						A2(_user$project$Music$phrase, 0.2, _user$project$Music$chromatic))
+						A2(_user$project$Music$sequence, 0.2, _user$project$Music$chromatic))
 				};
 			case 'RandomExample':
 				return {
@@ -8140,14 +8184,33 @@ var _user$project$Music$update = F2(
 					_1: A2(
 						_elm_lang$core$Random$generate,
 						_user$project$Music$RandomList,
-						_user$project$Music$randomList(10))
+						_user$project$Music$randomNoteList(10))
+				};
+			case 'RandomList':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Ports$schedule(
+						A2(_user$project$Music$sequence, 0.5, _p0._0))
+				};
+			case 'TwelveToneExample':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: A2(
+						_elm_lang$core$Random$generate,
+						_user$project$Music$TwelveToneOcts,
+						_user$project$Music$randomOctaves(4 * 11))
 				};
 			default:
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _user$project$Ports$schedule(
-						A2(_user$project$Music$phrase, 0.5, _p0._0))
+						A2(
+							_user$project$Music$sequence,
+							0.5,
+							A2(_user$project$Music$twelveTone, 60, _p0._0)))
 				};
 		}
 	});
@@ -8197,7 +8260,30 @@ var _user$project$Music$view = function (model) {
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html$text('random')
-						]))
+						])),
+					A2(
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$a,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$href('#'),
+							_elm_lang$html$Html_Events$onClick(_user$project$Music$TwelveToneExample)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('twelve tone')
+						])),
+					A2(
+					_elm_lang$html$Html$br,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[]))
 				]));
 	};
 	var viewLoading = A2(
