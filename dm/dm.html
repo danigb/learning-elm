@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Circles</title>
+    <title>Elm Drum Machine</title>
     <link rel="stylesheet" type="text/css" href="assets/dm.css" media="screen" />
   </head>
   <body></body>
@@ -10,8 +10,13 @@
     var app = Elm.DM.fullscreen()
     var ac = new AudioContext()
     var dm = eightoeight(ac).connect(ac.destination)
-    app.ports.play.subscribe(function (name) {
-      dm.start(name, ac.currentTime)
+    app.ports.play.subscribe(function (obj) {
+      console.log('JS PLAY', obj)
+      dm.start(obj[0], obj[1] || ac.currentTime)
+    })
+    app.ports.getTime.subscribe(function () {
+      console.log("GetTime JS")
+      app.ports.currentTime.send(ac.currentTime)
     })
   </script>
   </script>
