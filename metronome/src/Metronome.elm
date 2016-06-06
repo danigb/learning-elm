@@ -6,26 +6,27 @@ import Html.Attributes as A
 import Html.Events exposing (onClick, onInput)
 import Html.App as App
 import String
+import Ports
 
 type alias Bpm = Float
 type alias Meter = (Int, Int)
 type alias Pos = { measure: Int, beat: Int, sub: Int }
 
 type alias Model = {
-  bpm: Bpm, meter: Meter, running: Bool, startTime : Maybe Time, pos: Pos }
-type Msg = Tick Time | Start | Stop | BpmChanged String
+  bpm: Bpm, meter: Meter, running: Bool, startTime : Maybe Time, audioStartAt: Float, pos: Pos }
+type Msg = Tick Time | Start | Stop | BpmChanged String | SetAudioTime Float
 
 main =
   App.program { init = init, view = view, update = update, subscriptions = subscriptions }
 
 init : (Model, Cmd Msg)
-init = (Model 120 (4, 4) False Maybe.Nothing (Pos 0 0 0), Cmd.none)
+init = (Model 120 (4, 4) False Maybe.Nothing 0 (Pos 0 0 0), Cmd.none)
 
 view : Model -> Html Msg
 view model =
   div [] [
-    (if model.running then viewPos model.pos else div [] []),
-    Html.h3 [] [text (toString model.bpm)],
+    Html.h1 [] (if model.running then viewPos model.pos else [text "Press start"]),
+    Html.h3 [] [text ("Tempo: " ++ (toString model.bpm))],
     Html.input [A.type' "range", A.min "40", A.max "250", A.step "0.5",
                 A.value (toString model.bpm), onInput BpmChanged] [],
     Html.h4 [] [text (toString model.meter)],
@@ -34,7 +35,7 @@ view model =
   ]
 
 viewPos pos =
-  Html.h1 [] [
+  [
     span [] [text (toString pos.measure)],
     span [] [text "."],
     span [] [text (toString (pos.beat + 1))],
@@ -45,28 +46,52 @@ viewPos pos =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Start -> ({ model | running = True }, Cmd.none)
+    Start -> (model, Ports.getAudioTime 0)
     Stop -> ({ model | running = False, startTime = Maybe.Nothing }, Cmd.none)
-    Tick time -> (tick time model, Cmd.none)
+    Tick time -> tick time model
     BpmChanged newBpm -> ({ model | bpm = Result.withDefault 120 (String.toFloat newBpm) }, Cmd.none)
+    SetAudioTime time -> ({ model | running = True, audioStartAt = time }, Ports.click (time, "high"))
 
-tick : Time -> Model -> Model
+tick : Time -> Model -> (Model, Cmd Msg)
 tick time model =
-  case model.startTime of
-    Maybe.Nothing -> { model | startTime = Maybe.Just time, pos = Pos 0 0 0 }
-    Maybe.Just start -> { model | pos = position model.bpm model.meter start time }
+  let
+    elapsed = inSeconds (time - Maybe.withDefault time model.startTime)
+    updated = case model.startTime of
+      Maybe.Nothing -> { model | startTime = Maybe.Just time, pos = Pos 0 0 0 }
+      Maybe.Just start -> { model | pos = position model.bpm model.meter elapsed }
+    nextMeasure = Pos (updated.pos.measure + 1) 0 0
+    nmTime = toTime model.bpm model.meter nextMeasure
+    nbTime = toTime model.bpm model.meter (Pos updated.pos.measure (updated.pos.beat + 1) 0)
+    tickSecs = inSeconds (Time.second / 30)
+    cmd = if nmTime - elapsed <= tickSecs then Ports.click (model.audioStartAt + nmTime, "high")
+      else if nbTime - elapsed <= tickSecs then Ports.click (model.audioStartAt + nbTime, "low")
+      else Cmd.none
+  in
+    (updated, cmd)
 
-position : Bpm -> Meter -> Time -> Time -> Pos
-position bpm (n, d) start current =
+position : Bpm -> Meter -> Float -> Pos
+position bpm (n, d) secs =
   let
     len = 60 / (bpm * (toFloat d))
-    subs = floor (inSeconds (current - start) / len)
+    subs = floor (secs / len)
     beats = subs // 4
   in
     Pos (beats // n) (beats % n) (subs % 4)
 
+toTime : Bpm -> Meter -> Pos -> Float
+toTime bpm (n, d) pos =
+  let
+    len = 60 / (bpm * (toFloat d))
+    subs = toFloat ((pos.measure * n + pos.beat) * d + pos.sub)
+  in
+    len * subs
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
+  Sub.batch [subTime model, Ports.currentAudioTime SetAudioTime]
+
+subTime : Model -> Sub Msg
+subTime model =
   if model.running
     then Time.every (Time.second / 30) Tick
     else Sub.none

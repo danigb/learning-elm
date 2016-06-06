@@ -15,7 +15,7 @@ instruments = List.reverse ["kick", "snare", "rimshot", "hihat"]
 main =
   App.program { init = init, view = view, update = update, subscriptions = subscriptions }
 
-type alias AuClock 
+type alias AuClock
 type alias Model = { width : Int, height : Int, matrix: Matrix, acTime: Float }
 
 type Msg =
