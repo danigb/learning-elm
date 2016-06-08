@@ -7668,8 +7668,8 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Ports$click = _elm_lang$core$Native_Platform.outgoingPort(
-	'click',
+var _user$project$Ports$play = _elm_lang$core$Native_Platform.outgoingPort(
+	'play',
 	function (v) {
 		return [v._0, v._1];
 	});
@@ -7680,282 +7680,266 @@ var _user$project$Ports$getAudioTime = _elm_lang$core$Native_Platform.outgoingPo
 	});
 var _user$project$Ports$currentAudioTime = _elm_lang$core$Native_Platform.incomingPort('currentAudioTime', _elm_lang$core$Json_Decode$float);
 
-var _user$project$Metronome$toTime = F3(
-	function (bpm, _p0, pos) {
-		var _p1 = _p0;
-		var s = _elm_lang$core$Native_Utils.eq(_p1._1, 4) ? 4 : 3;
-		var len = 60 / (bpm * _elm_lang$core$Basics$toFloat(s));
-		var subs = _elm_lang$core$Basics$toFloat((((pos.measure * _p1._0) + pos.beat) * s) + pos.sub);
-		return len * subs;
-	});
-var _user$project$Metronome$span = function (t) {
-	return A2(
-		_elm_lang$html$Html$span,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html$text(t)
-			]));
+var _user$project$DrumMachine$pttrn = function (p) {
+	return _elm_lang$core$Array$fromList(
+		A2(_elm_lang$core$String$split, '', p));
 };
-var _user$project$Metronome$viewPos = function (pos) {
-	return _elm_lang$core$Native_List.fromArray(
-		[
-			_user$project$Metronome$span(
-			_elm_lang$core$Basics$toString(pos.measure)),
-			_user$project$Metronome$span('.'),
-			_user$project$Metronome$span(
-			_elm_lang$core$Basics$toString(pos.beat + 1)),
-			_user$project$Metronome$span('.'),
-			_user$project$Metronome$span(
-			_elm_lang$core$Basics$toString(pos.sub + 1))
-		]);
-};
-var _user$project$Metronome$viewTime = function (time) {
-	var s = _elm_lang$core$Basics$floor(
-		_elm_lang$core$Time$inSeconds(time));
-	var m = _elm_lang$core$Basics$floor(
-		_elm_lang$core$Time$inMinutes(time));
-	var h = _elm_lang$core$Basics$floor(
-		_elm_lang$core$Time$inHours(time));
-	return _elm_lang$core$Native_List.fromArray(
-		[
-			_user$project$Metronome$span(
-			_elm_lang$core$Basics$toString(h)),
-			_user$project$Metronome$span(':'),
-			_user$project$Metronome$span(
-			_elm_lang$core$Basics$toString(m)),
-			_user$project$Metronome$span(':'),
-			_user$project$Metronome$span(
-			_elm_lang$core$Basics$toString(s))
-		]);
-};
-var _user$project$Metronome$Pos = F3(
-	function (a, b, c) {
-		return {measure: a, beat: b, sub: c};
+var _user$project$DrumMachine$letters = _elm_lang$core$Array$fromList(
+	_elm_lang$core$Native_List.fromArray(
+		['h', 's', 'k']));
+var _user$project$DrumMachine$togglePtnStep = F3(
+	function (row, step, pattern) {
+		var current = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'.',
+			A2(_elm_lang$core$Array$get, step, pattern));
+		var letter = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'x',
+			A2(_elm_lang$core$Array$get, row, _user$project$DrumMachine$letters));
+		var next = _elm_lang$core$Native_Utils.eq(current, '.') ? letter : '.';
+		return A3(_elm_lang$core$Array$set, step, next, pattern);
 	});
-var _user$project$Metronome$position = F3(
-	function (bpm, _p2, secs) {
-		var _p3 = _p2;
-		var _p4 = _p3._0;
-		var s = _elm_lang$core$Native_Utils.eq(_p3._1, 4) ? 4 : 3;
-		var len = 60 / (bpm * _elm_lang$core$Basics$toFloat(s));
-		var subs = _elm_lang$core$Basics$floor(secs / len);
-		var beats = (subs / s) | 0;
-		return A3(
-			_user$project$Metronome$Pos,
-			(beats / _p4) | 0,
-			A2(_elm_lang$core$Basics_ops['%'], beats, _p4),
-			A2(_elm_lang$core$Basics_ops['%'], subs, s));
+var _user$project$DrumMachine$toggleStep = F3(
+	function (row, step, patterns) {
+		return A2(
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (i, p) {
+					return _elm_lang$core$Native_Utils.eq(i, row) ? A3(_user$project$DrumMachine$togglePtnStep, row, step, p) : p;
+				}),
+			patterns);
 	});
-var _user$project$Metronome$tick = F2(
+var _user$project$DrumMachine$beatToTime = F2(
+	function (tempo, beat) {
+		return _elm_lang$core$Basics$toFloat(beat) * (60000 / tempo);
+	});
+var _user$project$DrumMachine$schedule = F2(
+	function (model, beat) {
+		var beatTime = A2(_user$project$DrumMachine$beatToTime, model.tempo * 4, beat);
+		var audioTime = model.audioStartAt + _elm_lang$core$Time$inSeconds(beatTime);
+		return _elm_lang$core$Native_Utils.eq(
+			A2(_elm_lang$core$Basics_ops['%'], beat, 4),
+			0) ? _user$project$Ports$play(
+			{ctor: '_Tuple2', _0: audioTime, _1: 'hi-hat'}) : _elm_lang$core$Platform_Cmd$none;
+	});
+var _user$project$DrumMachine$timeToBeat = F3(
+	function (tempo, start, time) {
+		var beat = 60000 / tempo;
+		var elapsed = time - start;
+		return _elm_lang$core$Basics$round(elapsed / beat);
+	});
+var _user$project$DrumMachine$updateSched = F2(
 	function (time, model) {
-		var tickSecs = _elm_lang$core$Time$second / 30;
-		var elapsed = time - A2(_elm_lang$core$Maybe$withDefault, time, model.startTime);
-		var updated = function () {
-			var _p5 = model.startTime;
-			if (_p5.ctor === 'Nothing') {
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						startTime: _elm_lang$core$Maybe$Just(time),
-						pos: A3(_user$project$Metronome$Pos, 0, 0, 0)
-					});
-			} else {
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						pos: A3(_user$project$Metronome$position, model.bpm, model.meter, elapsed),
-						current: elapsed
-					});
-			}
-		}();
-		var nextMeasure = A3(_user$project$Metronome$Pos, updated.pos.measure + 1, 0, 0);
-		var nmTime = A3(_user$project$Metronome$toTime, model.bpm, model.meter, nextMeasure);
-		var nbTime = A3(
-			_user$project$Metronome$toTime,
-			model.bpm,
-			model.meter,
-			A3(_user$project$Metronome$Pos, updated.pos.measure, updated.pos.beat + 1, 0));
-		var cmd = (_elm_lang$core$Native_Utils.cmp(nmTime - elapsed, tickSecs) < 1) ? _user$project$Ports$click(
-			{ctor: '_Tuple2', _0: model.audioStartAt + nmTime, _1: 'high'}) : ((_elm_lang$core$Native_Utils.cmp(nbTime - elapsed, tickSecs) < 1) ? _user$project$Ports$click(
-			{ctor: '_Tuple2', _0: model.audioStartAt + nbTime, _1: 'low'}) : _elm_lang$core$Platform_Cmd$none);
-		return {ctor: '_Tuple2', _0: updated, _1: cmd};
+		var toBeat = A2(_user$project$DrumMachine$timeToBeat, model.tempo * 4, model.sched.startAt);
+		var nextBeat = toBeat(time + 100);
+		var cmd = _elm_lang$core$Native_Utils.eq(model.current, nextBeat) ? _elm_lang$core$Platform_Cmd$none : A2(_user$project$DrumMachine$schedule, model, nextBeat);
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					current: toBeat(time)
+				}),
+			_1: cmd
+		};
 	});
-var _user$project$Metronome$update = F2(
+var _user$project$DrumMachine$Sched = F3(
+	function (a, b, c) {
+		return {running: a, startAt: b, rate: c};
+	});
+var _user$project$DrumMachine$sched = F2(
+	function (running, startAt) {
+		return A3(_user$project$DrumMachine$Sched, running, startAt, _elm_lang$core$Time$second / 10);
+	});
+var _user$project$DrumMachine$toggleSched = function (model) {
+	return model.sched.running ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				sched: A2(_user$project$DrumMachine$sched, false, 0)
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: model,
+		_1: _user$project$Ports$getAudioTime(0)
+	};
+};
+var _user$project$DrumMachine$startSched = F2(
+	function (time, model) {
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					sched: A2(_user$project$DrumMachine$sched, true, time),
+					current: 0
+				}),
+			_1: A2(_user$project$DrumMachine$schedule, model, 0)
+		};
+	});
+var _user$project$DrumMachine$tick = F2(
+	function (time, model) {
+		return _elm_lang$core$Native_Utils.eq(model.sched.startAt, 0) ? A2(_user$project$DrumMachine$startSched, time, model) : A2(_user$project$DrumMachine$updateSched, time, model);
+	});
+var _user$project$DrumMachine$update = F2(
 	function (msg, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
-			case 'Start':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Ports$getAudioTime(0)
-				};
-			case 'Stop':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{running: false, startTime: _elm_lang$core$Maybe$Nothing}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'Tick':
-				return A2(_user$project$Metronome$tick, _p6._0, model);
-			case 'BpmChanged':
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'SetAudioTime':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							bpm: A2(
-								_elm_lang$core$Result$withDefault,
-								120,
-								_elm_lang$core$String$toFloat(_p6._0))
+							current: -1,
+							sched: A2(_user$project$DrumMachine$sched, true, 0),
+							audioStartAt: A2(_elm_lang$core$Debug$log, 'audio', _p0._0)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
-				var _p7 = _p6._0;
+			case 'ToggleSched':
+				return _user$project$DrumMachine$toggleSched(model);
+			case 'ToggleStep':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{running: true, audioStartAt: _p7}),
-					_1: _user$project$Ports$click(
-						{ctor: '_Tuple2', _0: _p7, _1: 'high'})
+						{
+							patterns: A3(_user$project$DrumMachine$toggleStep, _p0._0._0, _p0._0._1, model.patterns)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			default:
+				return A2(_user$project$DrumMachine$tick, _p0._0, model);
 		}
 	});
-var _user$project$Metronome$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {bpm: a, meter: b, running: c, startTime: d, current: e, audioStartAt: f, pos: g};
+var _user$project$DrumMachine$Model = F5(
+	function (a, b, c, d, e) {
+		return {tempo: a, current: b, patterns: c, audioStartAt: d, sched: e};
 	});
-var _user$project$Metronome$init = {
+var _user$project$DrumMachine$init = {
 	ctor: '_Tuple2',
-	_0: A7(
-		_user$project$Metronome$Model,
-		120,
-		{ctor: '_Tuple2', _0: 4, _1: 4},
-		false,
-		_elm_lang$core$Maybe$Nothing,
+	_0: A5(
+		_user$project$DrumMachine$Model,
+		100,
+		-1,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$DrumMachine$pttrn('h...h...h.h...h.'),
+				_user$project$DrumMachine$pttrn('..s...s...s..ss.'),
+				_user$project$DrumMachine$pttrn('k...kk..k...k..k')
+			]),
 		0,
-		0,
-		A3(_user$project$Metronome$Pos, 0, 0, 0)),
+		A2(_user$project$DrumMachine$sched, false, 0)),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$Metronome$SetAudioTime = function (a) {
+var _user$project$DrumMachine$SetAudioTime = function (a) {
 	return {ctor: 'SetAudioTime', _0: a};
 };
-var _user$project$Metronome$BpmChanged = function (a) {
-	return {ctor: 'BpmChanged', _0: a};
+var _user$project$DrumMachine$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
 };
-var _user$project$Metronome$Stop = {ctor: 'Stop'};
-var _user$project$Metronome$Start = {ctor: 'Start'};
-var _user$project$Metronome$view = function (model) {
+var _user$project$DrumMachine$subs = function (model) {
+	var currentTime = _user$project$Ports$currentAudioTime(_user$project$DrumMachine$SetAudioTime);
+	var time = model.sched.running ? A2(_elm_lang$core$Time$every, model.sched.rate, _user$project$DrumMachine$Tick) : _elm_lang$core$Platform_Sub$none;
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[time, currentTime]));
+};
+var _user$project$DrumMachine$ToggleSched = {ctor: 'ToggleSched'};
+var _user$project$DrumMachine$ToggleStep = function (a) {
+	return {ctor: 'ToggleStep', _0: a};
+};
+var _user$project$DrumMachine$viewStep = F4(
+	function (current, row, step, value) {
+		var classes = _elm_lang$html$Html_Attributes$classList(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 'step', _1: true},
+					{
+					ctor: '_Tuple2',
+					_0: 'active',
+					_1: !_elm_lang$core$Native_Utils.eq(value, '.')
+				},
+					{
+					ctor: '_Tuple2',
+					_0: 'current',
+					_1: _elm_lang$core$Native_Utils.eq(current, step)
+				}
+				]));
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					classes,
+					_elm_lang$html$Html_Events$onClick(
+					_user$project$DrumMachine$ToggleStep(
+						{ctor: '_Tuple2', _0: row, _1: step}))
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(value)
+				]));
+	});
+var _user$project$DrumMachine$viewRow = F3(
+	function (current, row, pattern) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('row')
+				]),
+			A2(
+				_elm_lang$core$List$indexedMap,
+				A2(_user$project$DrumMachine$viewStep, current, row),
+				_elm_lang$core$Array$toList(pattern)));
+	});
+var _user$project$DrumMachine$viewMain = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$class('main')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
 				_elm_lang$html$Html$h1,
 				_elm_lang$core$Native_List.fromArray(
-					[]),
-				model.running ? _user$project$Metronome$viewPos(model.pos) : _elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Press start')
-					])),
-				A2(
-				_elm_lang$html$Html$h2,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				model.running ? _user$project$Metronome$viewTime(model.current) : _elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('h:m:s')
-					])),
-				A2(
-				_elm_lang$html$Html$h3,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'Tempo: ',
-							_elm_lang$core$Basics$toString(model.bpm)))
-					])),
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('range'),
-						_elm_lang$html$Html_Attributes$min('40'),
-						_elm_lang$html$Html_Attributes$max('250'),
-						_elm_lang$html$Html_Attributes$step('0.5'),
-						_elm_lang$html$Html_Attributes$value(
-						_elm_lang$core$Basics$toString(model.bpm)),
-						_elm_lang$html$Html_Events$onInput(_user$project$Metronome$BpmChanged)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$h4,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(model.meter))
-					])),
-				A2(
-				_elm_lang$html$Html$a,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$href('#'),
-						_elm_lang$html$Html_Events$onClick(_user$project$Metronome$Start)
+						_elm_lang$html$Html_Events$onClick(_user$project$DrumMachine$ToggleSched)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Start')
+						_elm_lang$html$Html$text('Tiny808')
 					])),
 				A2(
-				_elm_lang$html$Html$a,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$href('#'),
-						_elm_lang$html$Html_Events$onClick(_user$project$Metronome$Stop)
+						_elm_lang$html$Html_Attributes$class('')
 					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Stop')
-					]))
+				A2(
+					_elm_lang$core$List$indexedMap,
+					_user$project$DrumMachine$viewRow(
+						A2(_elm_lang$core$Basics_ops['%'], model.current, 16)),
+					model.patterns))
 			]));
 };
-var _user$project$Metronome$Tick = function (a) {
-	return {ctor: 'Tick', _0: a};
+var _user$project$DrumMachine$view = function (model) {
+	return _user$project$DrumMachine$viewMain(model);
 };
-var _user$project$Metronome$subTime = function (model) {
-	return model.running ? A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second / 30, _user$project$Metronome$Tick) : _elm_lang$core$Platform_Sub$none;
-};
-var _user$project$Metronome$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Metronome$subTime(model),
-				_user$project$Ports$currentAudioTime(_user$project$Metronome$SetAudioTime)
-			]));
-};
-var _user$project$Metronome$main = {
+var _user$project$DrumMachine$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$Metronome$init, view: _user$project$Metronome$view, update: _user$project$Metronome$update, subscriptions: _user$project$Metronome$subscriptions})
+		{init: _user$project$DrumMachine$init, view: _user$project$DrumMachine$view, update: _user$project$DrumMachine$update, subscriptions: _user$project$DrumMachine$subs})
 };
 
 var Elm = {};
-Elm['Metronome'] = Elm['Metronome'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['Metronome'], 'Metronome', typeof _user$project$Metronome$main === 'undefined' ? null : _user$project$Metronome$main);
+Elm['DrumMachine'] = Elm['DrumMachine'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['DrumMachine'], 'DrumMachine', typeof _user$project$DrumMachine$main === 'undefined' ? null : _user$project$DrumMachine$main);
 
 if (typeof define === "function" && define['amd'])
 {

@@ -8,7 +8,7 @@ app.ports.play.subscribe(function (note) {
 })
 
 app.ports.schedule.subscribe(function (events) {
-  piano.schedule(events, null, 0)
+  piano.schedule(0, events)
 })
 
 var instrument = Soundfont.instrument(ac, 'acoustic_grand_piano').then(function (inst) {
@@ -17,4 +17,3 @@ var instrument = Soundfont.instrument(ac, 'acoustic_grand_piano').then(function 
   piano.on('event', function (a, b, c) { console.log('event', a, b, c) })
   app.ports.loaded.send('acoustic_grand_piano')
 })
-
