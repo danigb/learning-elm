@@ -1,5 +1,7 @@
-#dm-app {
-  font-family: sans-serif;
+html { background-color: #333; color: #111; }
+
+.app {
+  font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
   width: 66.666%;
   height: 100%;
   margin: auto;
@@ -8,21 +10,19 @@
   justify-content: center;
 }
 
-.rows, .transport { background-color: #333; padding: 1em; }
-
 .row {
   width: 100%; overflow: hidden;
 }
 
-.row .step {
-  float: left; width: 2em; height: 2em; margin: 0.2em 0.2em 0 0;
-  background-color: #555; }
+.row .step { float: left; background-color: #555; user-select: none;
+  font-size: 3em; width: 1em; height: 1em; text-align: center; }
 .step.active { background-color: yellow; }
-.step.current { background-color: #777; }
+.step.current { background-color: #AAA; }
 .step.current.active { background-color: white; }
 
 .step.trigger { width: 6em; margin-right: 1em; }
 
+.transport { margin-top: 2em;}
 .transport a { padding: 0.5em 2em; color: black; text-decoration: none; }
-a#play { background-color: #0b0; }
-a#stop { background-color: #c00; }
+a.start { background-color: #0b0; }
+a.stop { background-color: #c00; }

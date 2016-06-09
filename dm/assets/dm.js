@@ -7673,199 +7673,191 @@ var _user$project$Ports$play = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return [v._0, v._1];
 	});
-var _user$project$Ports$getTime = _elm_lang$core$Native_Platform.outgoingPort(
-	'getTime',
+var _user$project$Ports$getAudioTime = _elm_lang$core$Native_Platform.outgoingPort(
+	'getAudioTime',
 	function (v) {
 		return v;
 	});
-var _user$project$Ports$currentTime = _elm_lang$core$Native_Platform.incomingPort('currentTime', _elm_lang$core$Json_Decode$float);
+var _user$project$Ports$currentAudioTime = _elm_lang$core$Native_Platform.incomingPort(
+	'currentAudioTime',
+	A3(
+		_elm_lang$core$Json_Decode$tuple2,
+		F2(
+			function (x1, x2) {
+				return {ctor: '_Tuple2', _0: x1, _1: x2};
+			}),
+		_elm_lang$core$Json_Decode$float,
+		_elm_lang$core$Json_Decode$float));
 
-var _user$project$Matrix$getRow = F2(
-	function (name, matrix) {
-		var head = _elm_lang$core$List$head(
-			A2(
-				_elm_lang$core$List$filter,
-				function (_p0) {
-					var _p1 = _p0;
-					return _elm_lang$core$Native_Utils.eq(_p1._0, name);
-				},
-				matrix.rows));
-		var _p2 = head;
-		if (_p2.ctor === 'Just') {
-			return _p2._0;
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: name,
-				_1: A2(_elm_lang$core$Array$repeat, 0, 0)
-			};
-		}
+var _user$project$DrumMachine$start = F3(
+	function (time, audioTime, seq) {
+		return _elm_lang$core$Native_Utils.update(
+			seq,
+			{running: true, startedAt: time + 100, audioTime: audioTime + 0.1});
 	});
-var _user$project$Matrix$getData = F2(
-	function (name, matrix) {
-		var _p3 = A2(_user$project$Matrix$getRow, name, matrix);
-		var n = _p3._0;
-		var row = _p3._1;
-		return _elm_lang$core$Array$toList(row);
-	});
-var _user$project$Matrix$initRow = function (length) {
-	return A2(_elm_lang$core$Array$repeat, length, 0);
+var _user$project$DrumMachine$stepLength = function (meter) {
+	return 60000 / (meter.tempo * _elm_lang$core$Basics$toFloat(meter.div));
 };
-var _user$project$Matrix$Matrix = F3(
-	function (a, b, c) {
-		return {names: a, length: b, rows: c};
+var _user$project$DrumMachine$timeToStep = F2(
+	function (meter, time) {
+		return _elm_lang$core$Basics$floor(
+			time / _user$project$DrumMachine$stepLength(meter));
 	});
-var _user$project$Matrix$init = F2(
-	function (names, length) {
-		return A3(
-			_user$project$Matrix$Matrix,
-			names,
-			length,
-			A2(
-				_elm_lang$core$List$map,
-				function (n) {
-					return {
-						ctor: '_Tuple2',
-						_0: n,
-						_1: _user$project$Matrix$initRow(length)
-					};
-				},
-				names));
+var _user$project$DrumMachine$stepToTime = F2(
+	function (meter, num) {
+		return _elm_lang$core$Basics$toFloat(num) * _user$project$DrumMachine$stepLength(meter);
 	});
-var _user$project$Matrix$set = F4(
-	function (fn, name, step, matrix) {
-		var _p4 = A2(_user$project$Matrix$getRow, name, matrix);
-		var name = _p4._0;
-		var row = _p4._1;
-		var val = A2(
-			_elm_lang$core$Maybe$withDefault,
-			0,
-			A2(_elm_lang$core$Array$get, step, row));
-		var updated = A3(
-			_elm_lang$core$Array$set,
-			step,
-			fn(val),
-			row);
-		var updatedRows = A2(
-			_elm_lang$core$List$map,
-			function (_p5) {
-				var _p6 = _p5;
-				var _p7 = _p6._0;
-				return _elm_lang$core$Native_Utils.eq(_p7, name) ? {ctor: '_Tuple2', _0: _p7, _1: updated} : {ctor: '_Tuple2', _0: _p7, _1: _p6._1};
-			},
-			matrix.rows);
-		return A3(_user$project$Matrix$Matrix, matrix.names, matrix.length, updatedRows);
-	});
-
-var _user$project$Sched$beat = F3(
-	function (tempo, start, current) {
-		return (current - start) / (60 / _elm_lang$core$Basics$toFloat(tempo));
-	});
-var _user$project$Sched$schedule = F2(
-	function (time, sched) {
-		var secs = _elm_lang$core$Time$inSeconds(time);
-		var curState = sched.state;
-		var startedAt = (!_elm_lang$core$Native_Utils.eq(curState.startedAt, 0)) ? curState.startedAt : secs;
-		var nextStep = A2(
+var _user$project$DrumMachine$steps = function (meter) {
+	return meter.beats * meter.div;
+};
+var _user$project$DrumMachine$getCurrent = function (model) {
+	var _p0 = model.current;
+	if (_p0.ctor === 'Nothing') {
+		return -1;
+	} else {
+		return A2(
 			_elm_lang$core$Basics_ops['%'],
-			_elm_lang$core$Basics$floor(
-				A3(_user$project$Sched$beat, sched.tempo * 4, startedAt, secs)),
-			sched.steps);
-		var nextState = _elm_lang$core$Native_Utils.update(
-			curState,
-			{startedAt: startedAt, lastTick: secs, lastStep: nextStep});
-		return nextState;
-	});
-var _user$project$Sched$currentStep = function (sched) {
-	return sched.state.lastStep;
+			_p0._0,
+			_user$project$DrumMachine$steps(model.meter));
+	}
 };
-var _user$project$Sched$isRunning = function (sched) {
-	return sched.running;
+var _user$project$DrumMachine$pttrn = function (p) {
+	return _elm_lang$core$Array$fromList(
+		A2(_elm_lang$core$String$split, '', p));
 };
-var _user$project$Sched$tick = F2(
-	function (time, sched) {
-		return _user$project$Sched$isRunning(sched) ? _elm_lang$core$Native_Utils.update(
-			sched,
-			{
-				state: A2(_user$project$Sched$schedule, time, sched)
-			}) : sched;
+var _user$project$DrumMachine$patterns = _elm_lang$core$Native_List.fromArray(
+	[
+		_user$project$DrumMachine$pttrn('................'),
+		_user$project$DrumMachine$pttrn('h...h...h.h...h.'),
+		_user$project$DrumMachine$pttrn('..s...s...s..ss.'),
+		_user$project$DrumMachine$pttrn('k...kk..k...k..k')
+	]);
+var _user$project$DrumMachine$letters = _elm_lang$core$Array$fromList(
+	_elm_lang$core$Native_List.fromArray(
+		['b', 'h', 's', 'k']));
+var _user$project$DrumMachine$togglePtnStep = F3(
+	function (row, step, pattern) {
+		var current = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'.',
+			A2(_elm_lang$core$Array$get, step, pattern));
+		var letter = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'x',
+			A2(_elm_lang$core$Array$get, row, _user$project$DrumMachine$letters));
+		var next = _elm_lang$core$Native_Utils.eq(current, '.') ? letter : '.';
+		return A3(_elm_lang$core$Array$set, step, next, pattern);
 	});
-var _user$project$Sched$Sched = F4(
+var _user$project$DrumMachine$toggleStep = F3(
+	function (row, step, patterns) {
+		return A2(
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (i, p) {
+					return _elm_lang$core$Native_Utils.eq(i, row) ? A3(_user$project$DrumMachine$togglePtnStep, row, step, p) : p;
+				}),
+			patterns);
+	});
+var _user$project$DrumMachine$instruments = _elm_lang$core$Array$fromList(
+	_elm_lang$core$Native_List.fromArray(
+		['cow-bell', 'hi-hat', 'snare', 'kick']));
+var _user$project$DrumMachine$schedule = F2(
+	function (patterns, sched) {
+		var col = A2(
+			_elm_lang$core$List$map,
+			function (p) {
+				return A2(
+					_elm_lang$core$Maybe$withDefault,
+					'.',
+					A2(
+						_elm_lang$core$Array$get,
+						A2(_elm_lang$core$Basics_ops['%'], sched.step, 16),
+						p));
+			},
+			patterns);
+		var inst = function (n) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				'none',
+				A2(_elm_lang$core$Array$get, n, _user$project$DrumMachine$instruments));
+		};
+		var stepToCmd = F2(
+			function (step, val) {
+				return _elm_lang$core$Native_Utils.eq(val, '.') ? _elm_lang$core$Platform_Cmd$none : _user$project$Ports$play(
+					{
+						ctor: '_Tuple2',
+						_0: sched.audioTime,
+						_1: inst(step)
+					});
+			});
+		return _elm_lang$core$Platform_Cmd$batch(
+			A2(_elm_lang$core$List$indexedMap, stepToCmd, col));
+	});
+var _user$project$DrumMachine$Meter = F3(
+	function (a, b, c) {
+		return {tempo: a, beats: b, div: c};
+	});
+var _user$project$DrumMachine$StepSeq = F4(
 	function (a, b, c, d) {
-		return {tempo: a, steps: b, running: c, state: d};
+		return {running: a, nextStep: b, startedAt: c, audioTime: d};
 	});
-var _user$project$Sched$State = F4(
-	function (a, b, c, d) {
-		return {startedAtAudio: a, startedAt: b, lastTick: c, lastStep: d};
+var _user$project$DrumMachine$stepSeq = A4(_user$project$DrumMachine$StepSeq, false, 0, 0, 0);
+var _user$project$DrumMachine$Schedule = F2(
+	function (a, b) {
+		return {step: a, audioTime: b};
 	});
-var _user$project$Sched$init = F2(
-	function (tempo, steps) {
-		return A4(
-			_user$project$Sched$Sched,
-			tempo,
-			steps,
-			false,
-			A4(_user$project$Sched$State, 0, 0, 0, -1));
+var _user$project$DrumMachine$tick = F3(
+	function (meter, time, seq) {
+		var nextEvent = A2(_user$project$DrumMachine$stepToTime, meter, seq.nextStep);
+		var sched = A2(
+			_user$project$DrumMachine$Schedule,
+			seq.nextStep,
+			_elm_lang$core$Time$inSeconds(nextEvent) + seq.audioTime);
+		var elapsed = time - seq.startedAt;
+		return (_elm_lang$core$Native_Utils.cmp(elapsed + 200, nextEvent) < 0) ? {ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: seq} : {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Maybe$Just(sched),
+			_1: _elm_lang$core$Native_Utils.update(
+				seq,
+				{nextStep: seq.nextStep + 1})
+		};
 	});
-var _user$project$Sched$start = F2(
-	function (when, sched) {
-		return A4(
-			_user$project$Sched$Sched,
-			sched.tempo,
-			sched.steps,
-			true,
-			A4(_user$project$Sched$State, when, 0, 0, -1));
+var _user$project$DrumMachine$onTick = F2(
+	function (time, model) {
+		var _p1 = A3(_user$project$DrumMachine$tick, model.meter, time, model.seq);
+		var next = _p1._0;
+		var s = _p1._1;
+		var cmd = function () {
+			var _p2 = next;
+			if (_p2.ctor === 'Nothing') {
+				return _elm_lang$core$Platform_Cmd$none;
+			} else {
+				return A2(_user$project$DrumMachine$schedule, model.patterns, _p2._0);
+			}
+		}();
+		var current = A2(_user$project$DrumMachine$timeToStep, model.meter, time - model.seq.startedAt);
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					seq: s,
+					current: _elm_lang$core$Maybe$Just(current)
+				}),
+			_1: cmd
+		};
 	});
-var _user$project$Sched$stop = function (sched) {
-	return A4(
-		_user$project$Sched$Sched,
-		sched.tempo,
-		sched.steps,
-		false,
-		A4(_user$project$Sched$State, 0, 0, 0, -1));
-};
-
-var _user$project$DM$play = F2(
-	function (inst, when) {
-		return _user$project$Ports$play(
-			{ctor: '_Tuple2', _0: inst, _1: when});
-	});
-var _user$project$DM$update = F2(
+var _user$project$DrumMachine$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'Play':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: A2(_user$project$DM$play, _p0._0, 0)
-				};
-			case 'Tick':
-				return _user$project$Sched$isRunning(model.sched) ? {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							sched: A2(_user$project$Sched$tick, _p0._0, model.sched)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'Toggle':
-				var toggle = function (n) {
-					return _elm_lang$core$Native_Utils.eq(n, 0) ? 1 : 0;
-				};
-				var matrix = A4(_user$project$Matrix$set, toggle, _p0._0, _p0._1, model.matrix);
-				var updated = _elm_lang$core$Native_Utils.update(
-					model,
-					{matrix: matrix});
-				return {ctor: '_Tuple2', _0: updated, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'AudioTime':
+		var _p3 = msg;
+		switch (_p3.ctor) {
+			case 'SetTime':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							sched: A2(_user$project$Sched$start, _p0._0, model.sched)
+							seq: A3(_user$project$DrumMachine$start, _p3._0._0, _p3._0._1, model.seq)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -7873,105 +7865,94 @@ var _user$project$DM$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Ports$getTime(0)
+					_1: _user$project$Ports$getAudioTime(0)
 				};
-			default:
+			case 'Stop':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{seq: _user$project$DrumMachine$stepSeq, current: _elm_lang$core$Maybe$Nothing}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ToggleStep':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							sched: _user$project$Sched$stop(model.sched)
+							patterns: A3(_user$project$DrumMachine$toggleStep, _p3._0._0, _p3._0._1, model.patterns)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			default:
+				return A2(_user$project$DrumMachine$onTick, _p3._0, model);
 		}
 	});
-var _user$project$DM$instruments = _elm_lang$core$List$reverse(
-	_elm_lang$core$Native_List.fromArray(
-		['kick', 'snare', 'rimshot', 'hihat']));
-var _user$project$DM$Model = F4(
+var _user$project$DrumMachine$Model = F4(
 	function (a, b, c, d) {
-		return {width: a, height: b, matrix: c, sched: d};
+		return {meter: a, current: b, patterns: c, seq: d};
 	});
-var _user$project$DM$init = {
+var _user$project$DrumMachine$init = {
 	ctor: '_Tuple2',
 	_0: A4(
-		_user$project$DM$Model,
-		0,
-		0,
-		A2(_user$project$Matrix$init, _user$project$DM$instruments, 16),
-		A2(_user$project$Sched$init, 120, 16)),
+		_user$project$DrumMachine$Model,
+		A3(_user$project$DrumMachine$Meter, 100, 4, 4),
+		_elm_lang$core$Maybe$Nothing,
+		_user$project$DrumMachine$patterns,
+		_user$project$DrumMachine$stepSeq),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$DM$AudioTime = function (a) {
-	return {ctor: 'AudioTime', _0: a};
+var _user$project$DrumMachine$SetTime = function (a) {
+	return {ctor: 'SetTime', _0: a};
 };
-var _user$project$DM$Toggle = F2(
-	function (a, b) {
-		return {ctor: 'Toggle', _0: a, _1: b};
-	});
-var _user$project$DM$Tick = function (a) {
+var _user$project$DrumMachine$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
-var _user$project$DM$subscriptions = function (model) {
+var _user$project$DrumMachine$subs = function (model) {
+	var currentTime = _user$project$Ports$currentAudioTime(_user$project$DrumMachine$SetTime);
+	var rate = _elm_lang$core$Time$second / 10;
+	var time = model.seq.running ? A2(_elm_lang$core$Time$every, rate, _user$project$DrumMachine$Tick) : _elm_lang$core$Platform_Sub$none;
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second / 30, _user$project$DM$Tick),
-				_user$project$Ports$currentTime(_user$project$DM$AudioTime)
-			]));
+			[time, currentTime]));
 };
-var _user$project$DM$Play = function (a) {
-	return {ctor: 'Play', _0: a};
+var _user$project$DrumMachine$ToggleStep = function (a) {
+	return {ctor: 'ToggleStep', _0: a};
 };
-var _user$project$DM$viewRow = F2(
-	function (currentStep, _p1) {
-		var _p2 = _p1;
-		var _p3 = _p2._0;
-		var stepClass = F2(
-			function (step, val) {
-				return _elm_lang$html$Html_Attributes$classList(
-					_elm_lang$core$Native_List.fromArray(
-						[
-							{ctor: '_Tuple2', _0: 'row step', _1: true},
-							{
-							ctor: '_Tuple2',
-							_0: 'active',
-							_1: _elm_lang$core$Native_Utils.eq(val, 1)
-						},
-							{
-							ctor: '_Tuple2',
-							_0: 'current',
-							_1: _elm_lang$core$Native_Utils.eq(step, currentStep)
-						}
-						]));
-			});
-		var viewStep = F2(
-			function (step, val) {
-				return A2(
-					_elm_lang$html$Html$div,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							A2(stepClass, step, val),
-							_elm_lang$html$Html_Events$onClick(
-							A2(_user$project$DM$Toggle, _p3, step))
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[]));
-			});
-		var trigger = A2(
+var _user$project$DrumMachine$viewStep = F4(
+	function (current, row, step, value) {
+		var classes = _elm_lang$html$Html_Attributes$classList(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 'step', _1: true},
+					{
+					ctor: '_Tuple2',
+					_0: 'active',
+					_1: !_elm_lang$core$Native_Utils.eq(value, '.')
+				},
+					{
+					ctor: '_Tuple2',
+					_0: 'current',
+					_1: _elm_lang$core$Native_Utils.eq(current, step)
+				}
+				]));
+		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html_Attributes$class('trigger step'),
+					classes,
 					_elm_lang$html$Html_Events$onClick(
-					_user$project$DM$Play(_p3))
+					_user$project$DrumMachine$ToggleStep(
+						{ctor: '_Tuple2', _0: row, _1: step}))
 				]),
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$html$Html$text(_p3)
+					_elm_lang$html$Html$text(value)
 				]));
+	});
+var _user$project$DrumMachine$viewRow = F3(
+	function (current, row, pattern) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -7979,21 +7960,20 @@ var _user$project$DM$viewRow = F2(
 					_elm_lang$html$Html_Attributes$class('row')
 				]),
 			A2(
-				_elm_lang$core$List_ops['::'],
-				trigger,
-				_elm_lang$core$Array$toList(
-					A2(_elm_lang$core$Array$indexedMap, viewStep, _p2._1))));
+				_elm_lang$core$List$indexedMap,
+				A2(_user$project$DrumMachine$viewStep, current, row),
+				_elm_lang$core$Array$toList(pattern)));
 	});
-var _user$project$DM$Stop = {ctor: 'Stop'};
-var _user$project$DM$Start = {ctor: 'Start'};
-var _user$project$DM$viewTransport = function (model) {
-	var ctrl = _user$project$Sched$isRunning(model.sched) ? A2(
+var _user$project$DrumMachine$Stop = {ctor: 'Stop'};
+var _user$project$DrumMachine$Start = {ctor: 'Start'};
+var _user$project$DrumMachine$viewTranport = function (model) {
+	var btn = model.seq.running ? A2(
 		_elm_lang$html$Html$a,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$id('stop'),
 				_elm_lang$html$Html_Attributes$href('#'),
-				_elm_lang$html$Html_Events$onClick(_user$project$DM$Stop)
+				_elm_lang$html$Html_Attributes$class('stop'),
+				_elm_lang$html$Html_Events$onClick(_user$project$DrumMachine$Stop)
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -8002,13 +7982,13 @@ var _user$project$DM$viewTransport = function (model) {
 		_elm_lang$html$Html$a,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$id('play'),
 				_elm_lang$html$Html_Attributes$href('#'),
-				_elm_lang$html$Html_Events$onClick(_user$project$DM$Start)
+				_elm_lang$html$Html_Attributes$class('start'),
+				_elm_lang$html$Html_Events$onClick(_user$project$DrumMachine$Start)
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text('Play')
+				_elm_lang$html$Html$text('Start')
 			]));
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8017,40 +7997,59 @@ var _user$project$DM$viewTransport = function (model) {
 				_elm_lang$html$Html_Attributes$class('transport')
 			]),
 		_elm_lang$core$Native_List.fromArray(
-			[ctrl]));
+			[btn]));
 };
-var _user$project$DM$view = function (model) {
-	var rows = A2(
-		_elm_lang$core$List$map,
-		_user$project$DM$viewRow(
-			_user$project$Sched$currentStep(model.sched)),
-		model.matrix.rows);
+var _user$project$DrumMachine$viewMain = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$id('dm-app')
+				_elm_lang$html$Html_Attributes$class('main')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Elm Drum Machine')
+					])),
+				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('rows')
+						_elm_lang$html$Html_Attributes$class('')
 					]),
-				rows),
-				_user$project$DM$viewTransport(model)
+				A2(
+					_elm_lang$core$List$indexedMap,
+					_user$project$DrumMachine$viewRow(
+						_user$project$DrumMachine$getCurrent(model)),
+					model.patterns)),
+				_user$project$DrumMachine$viewTranport(model)
 			]));
 };
-var _user$project$DM$main = {
+var _user$project$DrumMachine$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('app')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$DrumMachine$viewMain(model)
+			]));
+};
+var _user$project$DrumMachine$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$DM$init, view: _user$project$DM$view, update: _user$project$DM$update, subscriptions: _user$project$DM$subscriptions})
+		{init: _user$project$DrumMachine$init, view: _user$project$DrumMachine$view, update: _user$project$DrumMachine$update, subscriptions: _user$project$DrumMachine$subs})
 };
 
 var Elm = {};
-Elm['DM'] = Elm['DM'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['DM'], 'DM', typeof _user$project$DM$main === 'undefined' ? null : _user$project$DM$main);
+Elm['DrumMachine'] = Elm['DrumMachine'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['DrumMachine'], 'DrumMachine', typeof _user$project$DrumMachine$main === 'undefined' ? null : _user$project$DrumMachine$main);
 
 if (typeof define === "function" && define['amd'])
 {

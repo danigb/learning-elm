@@ -1,23 +1,11 @@
 <html>
   <head>
-    <title>Circles</title>
+    <title>Drum Machine</title>
     <link rel="stylesheet" type="text/css" href="assets/dm.css" media="screen" />
   </head>
   <body></body>
   <script src="assets/dm.js"></script>
-  <script src="assets/808.js"></script>
-  <script>
-    var app = Elm.DM.fullscreen()
-    var ac = new AudioContext()
-    var dm = eightoeight(ac)
-    console.log('dm', dm)
-    app.ports.play.subscribe(function (name) {
-      var inst = dm[name]
-      if (!inst) return
-      var node = inst()
-      node.connect(ac.destination)
-      node.start(ac.currentTime)
-    })
-  </script>
+  <script src="assets/tiny808.min.js"></script>
+  <script src="elm-setup.js"></script>
   </script>
 </html>

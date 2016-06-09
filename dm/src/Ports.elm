@@ -1,7 +1,7 @@
 port module Ports exposing (..)
 
-port play : (String, Float) -> Cmd msg
+port play : (Float, String) -> Cmd msg
 
 port getAudioTime: Float -> Cmd msg
 
-port currentTime: (Float -> msg) -> Sub msg
+port currentAudioTime: ((Float, Float) -> msg) -> Sub msg
