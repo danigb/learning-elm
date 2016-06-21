@@ -7727,9 +7727,9 @@ var _user$project$DrumMachine$pttrn = function (p) {
 };
 var _user$project$DrumMachine$patterns = _elm_lang$core$Native_List.fromArray(
 	[
-		_user$project$DrumMachine$pttrn('................'),
+		_user$project$DrumMachine$pttrn('.......b........'),
 		_user$project$DrumMachine$pttrn('h...h...h.h...h.'),
-		_user$project$DrumMachine$pttrn('..s...s...s..ss.'),
+		_user$project$DrumMachine$pttrn('..ss..s...s..ss.'),
 		_user$project$DrumMachine$pttrn('k...kk..k...k..k')
 	]);
 var _user$project$DrumMachine$letters = _elm_lang$core$Array$fromList(
@@ -7737,15 +7737,15 @@ var _user$project$DrumMachine$letters = _elm_lang$core$Array$fromList(
 		['b', 'h', 's', 'k']));
 var _user$project$DrumMachine$togglePtnStep = F3(
 	function (row, step, pattern) {
+		var rowLetter = A2(
+			_elm_lang$core$Maybe$withDefault,
+			'x',
+			A2(_elm_lang$core$Array$get, row, _user$project$DrumMachine$letters));
 		var current = A2(
 			_elm_lang$core$Maybe$withDefault,
 			'.',
 			A2(_elm_lang$core$Array$get, step, pattern));
-		var letter = A2(
-			_elm_lang$core$Maybe$withDefault,
-			'x',
-			A2(_elm_lang$core$Array$get, row, _user$project$DrumMachine$letters));
-		var next = _elm_lang$core$Native_Utils.eq(current, '.') ? letter : '.';
+		var next = _elm_lang$core$Native_Utils.eq(current, '.') ? rowLetter : '.';
 		return A3(_elm_lang$core$Array$set, step, next, pattern);
 	});
 var _user$project$DrumMachine$toggleStep = F3(

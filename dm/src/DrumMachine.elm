@@ -15,9 +15,9 @@ import Ports
 instruments = Array.fromList ["cow-bell", "hi-hat", "snare", "kick"]
 letters = Array.fromList ["b", "h", "s", "k"]
 patterns = [
-  (pttrn "................"),
+  (pttrn ".......b........"),
   (pttrn "h...h...h.h...h."),
-  (pttrn "..s...s...s..ss."),
+  (pttrn "..ss..s...s..ss."),
   (pttrn "k...kk..k...k..k") ]
 
 
@@ -31,9 +31,9 @@ toggleStep row step patterns =
 togglePtnStep : Int -> Int -> Array String -> Array String
 togglePtnStep row step pattern =
   let
-    letter = withDefault "x" (Array.get row letters)
     current = withDefault "." (Array.get step pattern)
-    next = if current == "." then letter else "."
+    rowLetter = withDefault "x" (Array.get row letters)
+    next = if current == "." then rowLetter else "."
   in
     Array.set step next pattern
 

@@ -20,3 +20,7 @@ Compile: `elm-make Main.elm --output index.html`
 - Circles: http://danigb.github.io/learning-elm/circles
 - Dice: http://danigb.github.io/learning-elm/dice
 - Clock: http://danigb.github.io/learning-elm/clock
+
+## Links, blogs, learn, inspiration
+
+- https://lexi-lambda.github.io/blog/2015/11/06/functionally-updating-record-types-in-elm/
