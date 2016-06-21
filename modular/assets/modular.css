@@ -1,0 +1,11 @@
+
+html, body {
+  background-color: #EEE;
+  font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.knob { width: 48px; }
+.knob .label { font-size: 12px; text-align: center; font-weight: 200; }
+.knob .outer { stroke: #cfd8dc; stroke-width: 0.75px; fill: none; }
+.knob .inner { fill: #b0bec5; }
+.knob .gauge { stroke-width: 4px; stroke: #039be5; fill: none; }
