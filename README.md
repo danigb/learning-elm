@@ -13,6 +13,7 @@ Compile: `elm-make Main.elm --output index.html`
 
 #### Examples
 
+- Knob: http://danigb.github.io/learning-elm/knob
 - Metronome: http://danigb.github.io/learning-elm/metronome
 - Music1: http://danigb.github.io/learning-elm/music1
 - DrumMachine: http://danigb.github.io/learning-elm/dm
