@@ -8138,7 +8138,7 @@ var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$a
 var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
 var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
 
-var _user$project$Modular$dragValue = function (drag) {
+var _user$project$Knob$dragValue = function (drag) {
 	var _p0 = drag;
 	if (_p0.ctor === 'Nothing') {
 		return 0;
@@ -8147,16 +8147,16 @@ var _user$project$Modular$dragValue = function (drag) {
 		return _p1.start.y - _p1.current.y;
 	}
 };
-var _user$project$Modular$value = function (model) {
+var _user$project$Knob$value = function (model) {
 	var step = (model.max - model.min) / 100;
 	var offsetVal = _elm_lang$core$Basics$toFloat(
-		_user$project$Modular$dragValue(model.drag)) * step;
+		_user$project$Knob$dragValue(model.drag)) * step;
 	return A2(
 		_elm_lang$core$Basics$max,
 		model.min,
 		A2(_elm_lang$core$Basics$min, model.max, model.value + offsetVal));
 };
-var _user$project$Modular$pM = F2(
+var _user$project$Knob$pM = F2(
 	function (x, y) {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -8169,42 +8169,42 @@ var _user$project$Modular$pM = F2(
 					' ',
 					_elm_lang$core$Basics$toString(y))));
 	});
-var _user$project$Modular$toS = function (o) {
+var _user$project$Knob$toS = function (o) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		' ',
 		_elm_lang$core$Basics$toString(o));
 };
-var _user$project$Modular$pA = F7(
+var _user$project$Knob$pA = F7(
 	function (rx, ry, rot, large, sweep, x, y) {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			'A',
 			A2(
 				_elm_lang$core$Basics_ops['++'],
-				_user$project$Modular$toS(rx),
+				_user$project$Knob$toS(rx),
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					_user$project$Modular$toS(ry),
+					_user$project$Knob$toS(ry),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
-						_user$project$Modular$toS(rot),
+						_user$project$Knob$toS(rot),
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_user$project$Modular$toS(large),
+							_user$project$Knob$toS(large),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_user$project$Modular$toS(sweep),
+								_user$project$Knob$toS(sweep),
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_user$project$Modular$toS(x),
-									_user$project$Modular$toS(y))))))));
+									_user$project$Knob$toS(x),
+									_user$project$Knob$toS(y))))))));
 	});
-var _user$project$Modular$Drag = F2(
+var _user$project$Knob$Drag = F2(
 	function (a, b) {
 		return {start: a, current: b};
 	});
-var _user$project$Modular$update = F2(
+var _user$project$Knob$update = F2(
 	function (msg, model) {
 		var _p2 = msg;
 		switch (_p2.ctor) {
@@ -8216,7 +8216,7 @@ var _user$project$Modular$update = F2(
 						model,
 						{
 							drag: _elm_lang$core$Maybe$Just(
-								A2(_user$project$Modular$Drag, _p3, _p3))
+								A2(_user$project$Knob$Drag, _p3, _p3))
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -8230,7 +8230,7 @@ var _user$project$Modular$update = F2(
 								_elm_lang$core$Maybe$map,
 								function (_p4) {
 									var _p5 = _p4;
-									return A2(_user$project$Modular$Drag, _p5.start, _p2._0);
+									return A2(_user$project$Knob$Drag, _p5.start, _p2._0);
 								},
 								model.drag)
 						}),
@@ -8242,29 +8242,29 @@ var _user$project$Modular$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							value: _user$project$Modular$value(model),
+							value: _user$project$Knob$value(model),
 							drag: _elm_lang$core$Maybe$Nothing
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
 	});
-var _user$project$Modular$Model = F4(
-	function (a, b, c, d) {
-		return {min: a, max: b, value: c, drag: d};
+var _user$project$Knob$Model = F5(
+	function (a, b, c, d, e) {
+		return {label: a, min: b, max: c, value: d, drag: e};
 	});
-var _user$project$Modular$init = {
+var _user$project$Knob$init = {
 	ctor: '_Tuple2',
-	_0: A4(_user$project$Modular$Model, 0, 100, 50, _elm_lang$core$Maybe$Nothing),
+	_0: A5(_user$project$Knob$Model, 'Gain', 0, 100, 50, _elm_lang$core$Maybe$Nothing),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$Modular$DragEnd = function (a) {
+var _user$project$Knob$DragEnd = function (a) {
 	return {ctor: 'DragEnd', _0: a};
 };
-var _user$project$Modular$DragAt = function (a) {
+var _user$project$Knob$DragAt = function (a) {
 	return {ctor: 'DragAt', _0: a};
 };
-var _user$project$Modular$subscriptions = function (model) {
+var _user$project$Knob$subscriptions = function (model) {
 	var _p6 = model.drag;
 	if (_p6.ctor === 'Nothing') {
 		return _elm_lang$core$Platform_Sub$none;
@@ -8272,26 +8272,26 @@ var _user$project$Modular$subscriptions = function (model) {
 		return _elm_lang$core$Platform_Sub$batch(
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_elm_lang$mouse$Mouse$moves(_user$project$Modular$DragAt),
-					_elm_lang$mouse$Mouse$ups(_user$project$Modular$DragEnd)
+					_elm_lang$mouse$Mouse$moves(_user$project$Knob$DragAt),
+					_elm_lang$mouse$Mouse$ups(_user$project$Knob$DragEnd)
 				]));
 	}
 };
-var _user$project$Modular$DragStart = function (a) {
+var _user$project$Knob$DragStart = function (a) {
 	return {ctor: 'DragStart', _0: a};
 };
-var _user$project$Modular$onMouseDown = A2(
+var _user$project$Knob$onMouseDown = A2(
 	_elm_lang$virtual_dom$VirtualDom$on,
 	'mousedown',
-	A2(_elm_lang$core$Json_Decode$map, _user$project$Modular$DragStart, _elm_lang$mouse$Mouse$position));
-var _user$project$Modular$view = function (model) {
+	A2(_elm_lang$core$Json_Decode$map, _user$project$Knob$DragStart, _elm_lang$mouse$Mouse$position));
+var _user$project$Knob$view = function (model) {
 	var offset = _elm_lang$core$Basics$pi * 0.75;
 	var ar = 19;
 	var c = 23.5;
 	var x1 = c + (ar * _elm_lang$core$Basics$cos(offset));
 	var y1 = c + (ar * _elm_lang$core$Basics$sin(offset));
 	var sC = _elm_lang$core$Basics$toString(c);
-	var val = _user$project$Modular$value(model);
+	var val = _user$project$Knob$value(model);
 	var normValue = (val - model.min) / (model.max - model.min);
 	var target = (normValue * _elm_lang$core$Basics$pi) * 1.5;
 	var x2 = c + (ar * _elm_lang$core$Basics$cos(offset + target));
@@ -8299,11 +8299,11 @@ var _user$project$Modular$view = function (model) {
 	var flag = (_elm_lang$core$Native_Utils.cmp(target, _elm_lang$core$Basics$pi) < 0) ? 0 : 1;
 	var m = A2(
 		_elm_lang$core$Basics_ops['++'],
-		A2(_user$project$Modular$pM, x1, y1),
+		A2(_user$project$Knob$pM, x1, y1),
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			' ',
-			A7(_user$project$Modular$pA, ar, ar, 0, flag, 1, x2, y2)));
+			A7(_user$project$Knob$pA, ar, ar, 0, flag, 1, x2, y2)));
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -8316,18 +8316,18 @@ var _user$project$Modular$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('label')
+						_elm_lang$html$Html_Attributes$class('label noselect')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Name')
+						_elm_lang$html$Html$text(model.label)
 					])),
 				A2(
 				_elm_lang$svg$Svg$svg,
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$svg$Svg_Attributes$class('knob'),
-						_user$project$Modular$onMouseDown,
+						_user$project$Knob$onMouseDown,
 						_elm_lang$svg$Svg_Attributes$width('48'),
 						_elm_lang$svg$Svg_Attributes$height('48')
 					]),
@@ -8369,7 +8369,7 @@ var _user$project$Modular$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('label')
+						_elm_lang$html$Html_Attributes$class('label noselect')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -8378,14 +8378,49 @@ var _user$project$Modular$view = function (model) {
 					]))
 			]));
 };
-var _user$project$Modular$main = {
+var _user$project$Knob$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$Modular$init, view: _user$project$Modular$view, update: _user$project$Modular$update, subscriptions: _user$project$Modular$subscriptions})
+		{init: _user$project$Knob$init, view: _user$project$Knob$view, update: _user$project$Knob$update, subscriptions: _user$project$Knob$subscriptions})
 };
 
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('Hola')
+			]));
+};
+var _user$project$Main$init = {
+	ctor: '_Tuple2',
+	_0: {
+		gain: A5(_user$project$Knob$Model, 'Gain', 0, 100, 50, _elm_lang$core$Maybe$Nothing),
+		freq: A5(_user$project$Knob$Model, 'Freq', 100, 2000, 440, _elm_lang$core$Maybe$Nothing)
+	},
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Main$main = {
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})
+};
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {gain: a, freq: b};
+	});
+var _user$project$Main$None = {ctor: 'None'};
+
 var Elm = {};
-Elm['Modular'] = Elm['Modular'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['Modular'], 'Modular', typeof _user$project$Modular$main === 'undefined' ? null : _user$project$Modular$main);
+Elm['Main'] = Elm['Main'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['Main'], 'Main', typeof _user$project$Main$main === 'undefined' ? null : _user$project$Main$main);
 
 if (typeof define === "function" && define['amd'])
 {

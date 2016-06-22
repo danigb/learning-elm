@@ -1,4 +1,4 @@
-module Knob exposing (..)
+module Knob exposing (Model, Msg, init, update, view)
 import Html exposing (Html)
 import Html.App as App
 import Html.Attributes as Attr

@@ -8249,13 +8249,13 @@ var _user$project$Knob$update = F2(
 				};
 		}
 	});
-var _user$project$Knob$Model = F4(
-	function (a, b, c, d) {
-		return {min: a, max: b, value: c, drag: d};
+var _user$project$Knob$Model = F5(
+	function (a, b, c, d, e) {
+		return {label: a, min: b, max: c, value: d, drag: e};
 	});
 var _user$project$Knob$init = {
 	ctor: '_Tuple2',
-	_0: A4(_user$project$Knob$Model, 0, 100, 50, _elm_lang$core$Maybe$Nothing),
+	_0: A5(_user$project$Knob$Model, 'Gain', 0, 100, 50, _elm_lang$core$Maybe$Nothing),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Knob$DragEnd = function (a) {
@@ -8316,11 +8316,11 @@ var _user$project$Knob$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('label')
+						_elm_lang$html$Html_Attributes$class('label noselect')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Name')
+						_elm_lang$html$Html$text(model.label)
 					])),
 				A2(
 				_elm_lang$svg$Svg$svg,
@@ -8369,7 +8369,7 @@ var _user$project$Knob$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('label')
+						_elm_lang$html$Html_Attributes$class('label noselect')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
